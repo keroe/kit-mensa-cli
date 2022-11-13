@@ -1,6 +1,7 @@
 import kit_mensa
 
-if __name__ == "__main__":
+
+def main():
     KIT_MENSA_URL = (
         "https://www.mensaplan.de/karlsruhe/mensa-am-adenauerring/index.html"
     )
@@ -9,3 +10,7 @@ if __name__ == "__main__":
     weekday_idx = kit_mensa.get_weekday_as_index()
     mensa_table = kit_mensa.get_menu_for_today(mensa_menu_dict, weekday_idx)
     print(mensa_table)
+
+
+if __name__ == "__main__":
+    main()
