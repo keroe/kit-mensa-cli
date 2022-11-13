@@ -78,6 +78,10 @@ def get_weekday_as_index():
 
 
 def get_menu_for_today(mensa_menu_dict, weekday_idx):
+    # check if the week is either saturday or sunday
+    if weekday_idx > 4:
+        weekday_idx = 0
+        print("There are no menues on saturday or sunday. Let me give you the menu for monday.")
     mensa_table = MensaTable()
     for line_name, meals_per_day in mensa_menu_dict.items():
         line_per_day = MensaLine(line_name)
