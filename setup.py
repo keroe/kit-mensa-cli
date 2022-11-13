@@ -25,7 +25,7 @@ setuptools.setup(
     python_requires=">=3.6",
     entry_points={
         "console_scripts": [
-            "download = mensa.cli:main",
+            "download = kit_mensa.cli:main",
         ]
     }
 )
