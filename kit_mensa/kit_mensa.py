@@ -3,9 +3,10 @@ import requests
 import bs4
 import datetime
 
-class MensaLine():
+
+class MensaLine:
     def __init__(self, name):
-        self.name =name
+        self.name = name
         self.meals = []
 
     def add_meal(self, meal):
@@ -19,9 +20,11 @@ class MensaLine():
             return_string_list.append(f"- {meal}")
         return return_string_list
 
-class MensaTable():
+
+class MensaTable:
     def __init__(self):
         self.lines = []
+
     def add_line(self, line):
         self.lines.append(line)
 
@@ -37,15 +40,17 @@ class MensaTable():
                 return_string += f"{lines_on_left_row:<100}{lines_on_right_row}\n"
         return return_string
 
+
 def get_mensa_webpage_as_html(url):
     res = requests.get(url)
     res.raise_for_status()
-    return bs4.BeautifulSoup(res.text,"html.parser")
+    return bs4.BeautifulSoup(res.text, "html.parser")
+
 
 def filter_menus_from_webpage(webpage_html):
     # use html class name with a browser analyzing tool to get all columns with meals
     table_columns = webpage_html.find_all("tr", {"class": "today"})
-    mensa_menu_dict =  dict()
+    mensa_menu_dict = dict()
     for i, column in enumerate(table_columns[1:]):
         meals_per_day_for_line = column.find_all("td")
         # if there are no "td" elements in that column it is a mensa line header
@@ -66,9 +71,11 @@ def filter_menus_from_webpage(webpage_html):
                     mensa_menu_dict[line_name][day_idx].append(meal_text)
     return mensa_menu_dict
 
+
 def get_weekday_as_index():
     # returns weekday as int between 0-6
     return datetime.date.today().weekday()
+
 
 def get_menu_for_today(mensa_menu_dict, weekday_idx):
     mensa_table = MensaTable()

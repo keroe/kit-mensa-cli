@@ -8,7 +8,9 @@ setuptools.setup(
     version="0.0.1",
     author="Kevin Rösch",
     author_email="kevin.roesch@kit.edu",
-    description=("A commmand line interface to get the menu of the KIT mensa for the current day."),
+    description=(
+        "A commmand line interface to get the menu of the KIT mensa for the current day."
+    ),
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/keroe/kit-mensa-cli",
@@ -27,5 +29,5 @@ setuptools.setup(
         "console_scripts": [
             "download = kit_mensa.cli:main",
         ]
-    }
+    },
 )
