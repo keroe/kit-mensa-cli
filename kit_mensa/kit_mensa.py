@@ -3,42 +3,33 @@ import requests
 import bs4
 import datetime
 
-
-class MensaLine:
-    def __init__(self, name):
-        self.name = name
-        self.meals = []
-
-    def add_meal(self, meal):
-        self.meals.append(meal)
-
-    def get_string_list(self):
-        # construct header for line name
-        return_string_list = [f"{40*'-'}", f"{self.name}", f"{40*'-'}"]
-        # add each in meal with an appending dash
-        for meal in self.meals:
-            return_string_list.append(f"- {meal}")
-        return return_string_list
+from rich.panel import Panel
+from rich.table import Table
 
 
-class MensaTable:
-    def __init__(self):
-        self.lines = []
+def get_emoji_based_on_icon(icon):
+    icon_to_emoji_dict = {
+        "enthält regionales Rindfleisch aus artgerechter Tierhaltung": ":cow_face:",
+        "enthält Schweinefleisch": ":pig_face:",
+        "vegetarisches Gericht": "🥚 :seedling:",
+        "veganes Gericht": ":seedling:",
+    }
+    return icon_to_emoji_dict[icon]
 
-    def add_line(self, line):
-        self.lines.append(line)
 
-    def __str__(self):
-        return_string = ""
-        # use an interator here to iterate over two items at the same time. Useful for the 2 column print in the terminal
-        it = iter(self.lines)
-        for x in it:
-            left_rows = x.get_string_list()
-            right_rows = next(it).get_string_list()
-            for lines_on_left_row, lines_on_right_row in zip(left_rows, right_rows):
-                # construct string with content in the left column and the right column with padding in between
-                return_string += f"{lines_on_left_row:<100}{lines_on_right_row}\n"
-        return return_string
+def get_menu_renderable(mensa_menu_dict):
+    renderables = []
+    for line, meals in mensa_menu_dict.items():
+        table = Table(box=None)
+        for meal in meals:
+            emoji = get_emoji_based_on_icon(meal["icon"])
+            table.add_row(
+                f"{emoji}",
+                f"{meal['meal']}",
+                f"{meal['extras'] if meal.get('extras') else ''}",
+            )
+        renderables.append(Panel(table, title=f"[b]{line}", height=7))
+    return renderables
 
 
 def get_mensa_webpage_as_html(url):
@@ -48,50 +39,32 @@ def get_mensa_webpage_as_html(url):
 
 
 def filter_menus_from_webpage(webpage_html):
-    # use html class name with a browser analyzing tool to get all columns with meals
-    table_columns = webpage_html.find_all("tr", {"class": "today"})
+    import re
+
+    # use html class name with a browser analyzing tool to get the current day menu table
+    current_day_html = webpage_html.find("div", {"id": "canteen_day_1"})
+    # filter by mensa line rows
+    table_rows = current_day_html.find_all("tr", {"class": "mensatype_rows"})
     mensa_menu_dict = dict()
-    for i, column in enumerate(table_columns[1:]):
-        meals_per_day_for_line = column.find_all("td")
-        # if there are no "td" elements in that column it is a mensa line header
-        if not meals_per_day_for_line:
-            line_name = column.text
-            # construct per line list with one element per weekday
-            mensa_menu_dict[line_name] = [[], [], [], [], []]
-        for day_idx, meals in enumerate(meals_per_day_for_line):
-            for meal in meals:
-                meal_text = meal.select_one(".description").text
-                # if the meal name is to long, split it after 50 characters for better printing
-                if len(meal_text) > 100:
-                    meal_text_1 = meal_text[:50]
-                    meal_text_2 = meal_text[51:]
-                    mensa_menu_dict[line_name][day_idx].append(meal_text_1)
-                    mensa_menu_dict[line_name][day_idx].append(meal_text_2)
-                else:
-                    mensa_menu_dict[line_name][day_idx].append(meal_text)
+    for row in table_rows[:5]:
+        # get the line name and convert <br> to " "
+        line_name = row.find("td", {"class": "mensatype"}).get_text(" ")
+        mensa_menu_dict[line_name] = []
+        # all meal table row elements start with mt-
+        meals_html = row.find_all("tr", {"class": lambda L: L and L.startswith("mt-")})
+        for meal_html in meals_html:
+            meal_icon = meal_html.find("img")
+            meal_title_raw = meal_html.find("td", {"class": "menu-title"})
+            # meal_title_raw can look like this:
+            # "Spaghett [1,3,Ge,ML,Se,We]" where the numbers and chars in the brackets indicate extras
+            # use regex to filter actual dish and extras
+            meal_title = re.search("^[^\[]+", meal_title_raw.text)
+            meal_extras = re.search("\[(.*?)\]", meal_title_raw.text)
+            mensa_menu_dict[line_name].append(
+                {
+                    "meal": meal_title.group(0) if meal_title else "",
+                    "extras": meal_extras.group(0) if meal_extras else "",
+                    "icon": meal_icon.get("title"),
+                }
+            )
     return mensa_menu_dict
-
-
-def get_weekday_as_index():
-    # returns weekday as int between 0-6
-    return datetime.date.today().weekday()
-
-
-def get_menu_for_today(mensa_menu_dict, weekday_idx):
-    # check if the week is either saturday or sunday
-    if weekday_idx > 4:
-        weekday_idx = 0
-        print("There are no menues on saturday or sunday. Let me give you the menu for monday.")
-    mensa_table = MensaTable()
-    for line_name, meals_per_day in mensa_menu_dict.items():
-        line_per_day = MensaLine(line_name)
-        # for some lines there is only one entry per week -> the meal is the same for every day
-        if meals_per_day.count([]) == 4:
-            for meal in meals_per_day[0]:
-                line_per_day.add_meal(meal)
-        # normal lines have an entry for each day
-        else:
-            for meal in meals_per_day[weekday_idx]:
-                line_per_day.add_meal(meal)
-        mensa_table.add_line(line_per_day)
-    return mensa_table
