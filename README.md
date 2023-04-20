@@ -1,5 +1,5 @@
 # Python CLI for the KIT mensa menu 
-This package provides the KIT mensa menu from: https://www.mensaplan.de/karlsruhe/mensa-am-adenauerring/index.html
+This package provides the KIT mensa menu from: https://www.sw-ka.de/de/hochschulgastronomie/speiseplan/mensa_adenauerring/?kw=17
 The menu is printed in the terminal. 
 
 It contains a python module to import and a CLI tool. The package uses beautifulsoup to scrape the contents of the html page.
@@ -13,5 +13,5 @@ Use `pip install git+https://github.com/keroe/kit-mensa-cli`
 ## Using the CLI command
 
 ```
-$ kit-mensa-cli>
+$ kit-mensa-cli
 ```
