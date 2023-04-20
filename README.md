@@ -1,5 +1,5 @@
 # Python CLI for the KIT mensa menu 
-This package provides the KIT mensa menu from: https://www.sw-ka.de/de/hochschulgastronomie/speiseplan/mensa_adenauerring/?kw=17
+This package provides the KIT mensa menu from: https://www.sw-ka.de/de/hochschulgastronomie/speiseplan/mensa_adenauerring/
 The menu is printed in the terminal. 
 
 It contains a python module to import and a CLI tool. The package uses beautifulsoup to scrape the contents of the html page.
