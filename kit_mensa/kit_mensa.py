@@ -13,6 +13,7 @@ def get_emoji_based_on_icon(icon):
         "enthält Schweinefleisch": ":pig_face:",
         "vegetarisches Gericht": "🥚 :seedling:",
         "veganes Gericht": ":seedling:",
+        "": ""
     }
     return icon_to_emoji_dict[icon]
 
@@ -64,7 +65,7 @@ def filter_menus_from_webpage(webpage_html):
                 {
                     "meal": meal_title.group(0) if meal_title else "",
                     "extras": meal_extras.group(0) if meal_extras else "",
-                    "icon": meal_icon.get("title"),
+                    "icon": meal_icon.get("title") if meal_icon else "",
                 }
             )
     return mensa_menu_dict
