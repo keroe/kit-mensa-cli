@@ -1,6 +1,6 @@
 from rich.console import Console
 from rich.columns import Columns
-from kit_mensa import *
+from kit_mensa.kit_mensa import get_mensa_webpage_as_html, filter_menus_from_webpage, get_menu_renderable
 
 
 def main():
