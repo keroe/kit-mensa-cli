@@ -14,9 +14,12 @@ def get_emoji_based_on_icon(icon):
         "MSC aus zertifizierter Fischerei": ":fish:",
         "vegetarisches Gericht": "🥚 :seedling:",
         "veganes Gericht": ":seedling:",
-        "": ""
     }
-    return icon_to_emoji_dict[icon]
+    try:
+        return_value = icon_to_emoji_dict[icon]
+    except KeyError:
+        return_value = ""
+    return return_value
 
 
 def get_menu_renderable(mensa_menu_dict):
