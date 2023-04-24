@@ -58,7 +58,8 @@ def filter_menus_from_webpage(webpage_html):
         # all meal table row elements start with mt-
         meals_html = row.find_all("tr", {"class": lambda L: L and L.startswith("mt-")})
         for meal_html in meals_html:
-            meal_icon = meal_html.find("img")
+            meal_icon_html = meal_html.find("td", {"class": "mtd-icon"})
+            meal_icon = meal_icon_html.find("img")
             meal_title_raw = meal_html.find("td", {"class": "menu-title"})
             # meal_title_raw can look like this:
             # "Spaghett [1,3,Ge,ML,Se,We]" where the numbers and chars in the brackets indicate extras
