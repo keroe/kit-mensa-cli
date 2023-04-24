@@ -11,6 +11,7 @@ def get_emoji_based_on_icon(icon):
     icon_to_emoji_dict = {
         "enthält regionales Rindfleisch aus artgerechter Tierhaltung": ":cow_face:",
         "enthält Schweinefleisch": ":pig_face:",
+        "MSC aus zertifizierter Fischerei": ":fish:",
         "vegetarisches Gericht": "🥚 :seedling:",
         "veganes Gericht": ":seedling:",
         "": ""
