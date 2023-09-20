@@ -9,6 +9,10 @@ It contains a python module to import and a CLI tool. The package uses beautiful
 You can easily install the module directly from github using `pip`.  
 Use `pip install git+https://github.com/keroe/kit-mensa-cli` 
 
+## Update
+
+To update an existing installation, make sure to add the `--upgrade` flag.  
+`pip install --upgrade git+https://github.com/keroe/kit-mensa-cli` 
 
 ## Using the CLI command
 
