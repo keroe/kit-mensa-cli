@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import requests
 import bs4
-import datetime
 
 from rich.panel import Panel
 from rich.table import Table
@@ -31,9 +30,10 @@ def get_menu_renderable(mensa_menu_dict):
             table.add_row(
                 f"{emoji}",
                 f"{meal['meal']}",
+                f"{meal['price']} €" if meal.get("price") else "",
                 f"{meal['extras'] if meal.get('extras') else ''}",
             )
-        renderables.append(Panel(table, title=f"[b]{line}", height=7))
+        renderables.append(Panel(table, title=f"[b]{line}", height=len(table.rows)+3))
     return renderables
 
 
@@ -61,16 +61,19 @@ def filter_menus_from_webpage(webpage_html):
             meal_icon_html = meal_html.find("td", {"class": "mtd-icon"})
             meal_icon = meal_icon_html.find("img")
             meal_title_raw = meal_html.find("td", {"class": "menu-title"})
+            meal_price_raw = meal_html.find("span", {"class": "bgp price_1"})
             # meal_title_raw can look like this:
             # "Spaghett [1,3,Ge,ML,Se,We]" where the numbers and chars in the brackets indicate extras
             # use regex to filter actual dish and extras
             meal_title = re.search("^[^\[]+", meal_title_raw.text)
             meal_extras = re.search("\[(.*?)\]", meal_title_raw.text)
+            meal_price = re.search("[\d,]+", meal_price_raw.text)
             mensa_menu_dict[line_name].append(
                 {
                     "meal": meal_title.group(0) if meal_title else "",
                     "extras": meal_extras.group(0) if meal_extras else "",
                     "icon": meal_icon.get("title") if meal_icon else "",
+                    "price": meal_price.group(0) if meal_price else "",
                 }
             )
     return mensa_menu_dict
