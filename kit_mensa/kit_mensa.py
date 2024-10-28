@@ -66,9 +66,9 @@ def filter_menus_from_webpage(webpage_html):
             # meal_title_raw can look like this:
             # "Spaghett [1,3,Ge,ML,Se,We]" where the numbers and chars in the brackets indicate extras
             # use regex to filter actual dish and extras
-            meal_title = re.search("^[^\[]+", meal_title_raw.text)
-            meal_extras = re.search("\[(.*?)\]", meal_title_raw.text)
-            meal_price = re.search("[\d,]+", meal_price_raw.text)
+            meal_title = re.search(r"^[^\[]+", meal_title_raw.text)
+            meal_extras = re.search(r"\[(.*?)\]", meal_title_raw.text)
+            meal_price = re.search(r"[\d,]+", meal_price_raw.text)
             mensa_menu_dict[line_name].append(
                 {
                     "meal": meal_title.group(0) if meal_title else "",
